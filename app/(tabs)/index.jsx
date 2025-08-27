@@ -1,10 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import { AdMobBanner, setTestDeviceIDAsync } from 'expo-ads-admob';
-import { Audio } from 'expo-av';
-import { useEffect, useRef, useState } from 'react';
+import {Audio} from 'expo-av';
+import {useEffect, useRef, useState} from 'react';
+import {
+  AdEventType,
+  InterstitialAd,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 
-
-import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Modal, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 const NUM_SQUARES = 4;
 const BASE_FLASH_DURATION = 2000; // ms  
 const BASE_DELAY = 1500; // ms
@@ -14,6 +17,15 @@ const MIN_DELAY = 250; // ms
 const BANNER_ID = 'ca-app-pub-3940256099942544/6300978111'; // official test banner ID
 const INTERSTITIAL_ID = 'ca-app-pub-3940256099942544/1033173712'; // Replace with your AdMob interstitial unit ID
 */
+const platfomeAddUnitID = Platform.select({
+  ios: "ca-app-pub-2478199649340969/7711472979",     // iOS Interstitial Ad Unit ID
+  android: "ca-app-pub-2478199649340969/3333244265", // Android Interstitial Ad Unit ID
+});
+
+
+const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : platfomeAddUnitID;
+
+let interstitial = null;
 export default function FlashSquareGame() {
   const [flashingIdx, setFlashingIdx] = useState(null);
   const [score, setScore] = useState(0);
@@ -137,15 +149,69 @@ export default function FlashSquareGame() {
     }
   }
 */
-  function handleStartGame() {
+
+const [loaded, setLoaded] = useState(false);
+
+useEffect(() => {
+    interstitial = InterstitialAd.createForAdRequest(adUnitId);
+
+    const onLoaded = interstitial.addAdEventListener(AdEventType.LOADED, () => {
+      console.log('Ad loaded ✅');
+      setLoaded(true);
+    });
+
+    const onClosed = interstitial.addAdEventListener(AdEventType.CLOSED, () => {
+      console.log('Ad closed, reloading...');
+      startGame(); 
+      setLoaded(false);
+      interstitial.load(); // preload next ad
+      if (Platform.OS === 'ios') StatusBar.setHidden(false);
+    });
+
+    const onOpened = interstitial.addAdEventListener(AdEventType.OPENED, () => {
+      if (Platform.OS === 'ios') StatusBar.setHidden(true);
+    });
+
+    interstitial.load();
+
+    return () => {
+      onLoaded();
+      onClosed();
+      onOpened();
+  };
+}, []);
+const showAdOrWait = () => {
+  if (loaded && interstitial) {
+    interstitial.show();
+  } else {
+    console.log("⏳ Ad not ready, waiting...");
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        console.log("✅ Ad finished loading, showing now...");
+        unsubscribe();
+        interstitial.show();
+      }
+    );
+  }
+};
+
+const handleStartGame = async () => {
+
+
+    showAdOrWait();
+};
+const startGame = () => {
+  // all your game state resets here
+  // setGameStarted(true);
     setGameCount(c => c + 1);
     //maybeShowInterstitial();
     setScore(0);
     setShowStart(false);
     setShowModal(false);
     setFlashingIdx(null);
-    setFadeAnim(new Animated.Value(0)); // re-create node
-  }
+    setFadeAnim(new Animated.Value(0));
+  };
 
   // Helper to cancel timers and reset flash/animation
   function cancelRound() {
@@ -190,16 +256,6 @@ export default function FlashSquareGame() {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-
-       {/*
-      <AdMobBanner
-          bannerSize="banner"
-          adUnitID={BANNER_ID}
-          servePersonalizedAds
-          style={styles.banner}
-        />
- 
-*/}
         <TouchableOpacity style={styles.pauseButton} onPress={handlePause}>
           <Text style={styles.pauseButtonText}>⏸</Text>
         </TouchableOpacity>

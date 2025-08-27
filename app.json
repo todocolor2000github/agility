@@ -9,14 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zia786.game"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.zia786.game"
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +35,15 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      ["react-native-google-mobile-ads",
+      {
+          
+        "androidAppId":  "ca-app-pub-2478199649340969~2035640312",
+        "iosAppId":  "ca-app-pub-2478199649340969~2588791196",
+        "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+
+      }]
     ],
     "experiments": {
       "typedRoutes": true
