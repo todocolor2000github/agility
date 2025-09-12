@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.zia786.game"
+      "bundleIdentifier": "com.zia786.game",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,17 +39,23 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      ["react-native-google-mobile-ads",
-      {
-          
-        "androidAppId":  "ca-app-pub-2478199649340969~2035640312",
-        "iosAppId":  "ca-app-pub-2478199649340969~2588791196",
-        "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
-
-      }]
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-4357128939296672~1253260859",
+          "iosAppId": "ca-app-pub-4357128939296672~3508707349",
+          "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "873251af-c643-49d7-9288-ae6ba80fd08b"
+      }
     }
   }
 }

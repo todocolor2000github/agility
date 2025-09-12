@@ -25,7 +25,29 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="gamecontroller.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="game1"
+        options={{
+          title: 'Flash Square',
+          tabBarButton: () => null, // Hide from tab bar
+        }}
+        />
+      <Tabs.Screen
+        name="game2"
+        options={{
+          title: 'memory match',
+          tabBarButton: () => null, // Hide from tab bar
+        }}
+/>
+<Tabs.Screen
+        name="game3"
+        options={{
+          title: 'stamina',
+          tabBarButton: () => null, // Hide from tab bar
+        }}
+/>
     </Tabs>
+    
   );
 }
 
